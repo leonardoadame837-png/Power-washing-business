@@ -1,144 +1,82 @@
-PowerWash Booking — Business Management Platform
+# PowerWash Booking — Business Management Platform
 
-Project Overview
+A mobile-first website and booking-management starter for a pressure-washing business.
 
-PowerWash Booking is a professional, mobile-first web application designed to manage a pressure washing business from a single platform.
+## Project status
 
-The application combines customer acquisition, service estimates, appointment scheduling, job management, photo uploads, invoicing, and payment processing.
+This repository contains the public website prototype and GitHub Pages deployment workflow. The customer-facing interface can collect service details, calculate an indicative estimate, preview selected property photos, and prepare a booking request. **Live booking storage, administrator authentication, private photo storage, Google Calendar write access, invoices, and Stripe transactions require the separately deployed backend and account configuration described below.** Do not accept real payments or treat a browser-only demo request as a confirmed appointment.
 
-Primary objective: Allow customers to request, schedule, and pay for services online while allowing the business owner to manage customers, appointments, job locations, and revenue through an administrative dashboard.
+## Core capabilities planned
 
-Core Features
+- Professional service website, service-area and project-gallery sections.
+- Customer estimate and booking request forms.
+- Property photo selection and local preview before upload.
+- Owner dashboard for customers, estimates, jobs, and schedule.
+- Availability rules, working hours, travel buffers, rescheduling, and cancellation.
+- Google Calendar synchronization after OAuth consent and server-side integration.
+- Invoice generation, downloadable PDFs, payment status, and customer receipts.
+- Stripe Checkout for deposits/full payments and Stripe Billing for recurring plans.
+- Search-engine metadata, responsive design, and accessible forms.
 
-1. Public Business Website
+## Architecture
 
-- Professional homepage.
-- Service descriptions and pricing.
-- Before-and-after project gallery.
-- Service-area information.
-- Customer reviews.
-- Contact information.
-- Search-engine optimization.
+| Layer | Technology | Responsibility |
+|---|---|---|
+| Public frontend | HTML, CSS, JavaScript | GitHub Pages website and customer UI |
+| Backend | Supabase Edge Functions or equivalent | Secure booking, estimate, calendar, invoice, and payment APIs |
+| Database | PostgreSQL / Supabase | Customers, services, bookings, estimates, invoices, audit events |
+| Authentication | Supabase Auth | Owner/admin login and authorization |
+| Photo storage | Private Supabase Storage bucket | Customer uploads and time-limited download URLs |
+| Payments | Stripe Checkout, Billing, Invoicing | Hosted payment collection and recurring billing |
+| Calendar | Google Calendar API | Owner calendar synchronization through OAuth |
 
-2. Customer Booking System
+GitHub Pages is static hosting. It cannot securely store Stripe secret keys, perform trusted webhook verification, or provide private database and photo operations by itself.
 
-- Select pressure washing services.
-- Enter property address.
-- Select preferred appointment date and time.
-- Upload property photographs.
-- Request a customized estimate.
-- Receive booking confirmation.
-- View booking status.
-- Request rescheduling or cancellation.
+## Local preview
 
-3. Estimate Management
+Open `index.html` in a browser, or run a local static server:
 
-- Customer-submitted estimates.
-- Photo-based property assessment.
-- Custom service pricing.
-- Estimate approval and rejection.
-- Conversion of approved estimates into scheduled jobs.
+```bash
+python -m http.server 8000
+```
 
-4. Business Owner Dashboard
+Then visit `http://localhost:8000`.
 
-- Daily, weekly, and monthly calendar.
-- Customer directory.
-- Appointment management.
-- Job-location tracking.
-- Booking status management.
-- Revenue tracking.
-- Completed and pending jobs.
-- Customer communication records.
+## GitHub Pages deployment
 
-5. Invoicing
+The workflow at `.github/workflows/deploy.yml` deploys the repository root when changes are pushed to `main`.
 
-- Automatically generate invoices.
-- Assign invoice numbers.
-- Include services, quantities, and prices.
-- Track outstanding balances.
-- Send payment links.
-- Record payment status.
-- Generate downloadable PDF invoices and receipts.
+1. Open **Settings → Pages** in this repository.
+2. Set **Build and deployment → Source** to **GitHub Actions**.
+3. Push to `main` and monitor the **Actions** tab.
+4. After the first successful deployment, visit:
 
-6. Stripe Integration
+   https://leonardoadame837-png.github.io/Power-washing-business/
 
-Use Stripe for:
+GitHub Pages is available for public repositories on GitHub Free. See the [GitHub Pages workflow guide](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
-- Secure online payments.
-- Credit and debit card transactions.
-- Hosted Stripe Checkout.
-- Recurring service subscriptions.
-- Customer billing.
-- Invoice payments.
-- Payment confirmation through verified webhooks.
+## Required production configuration
 
-Never expose Stripe secret keys in frontend code.
+Before real customers can book or pay, configure:
 
-7. Photo Management
+- Supabase project URL and public anon key in frontend-safe configuration; enable strict Row Level Security policies.
+- Server-side functions for booking creation, availability checks, estimate submission, invoice generation, and signed photo access.
+- Google Cloud OAuth consent, Calendar API, and server-side token handling. Never put a Google client secret in browser code.
+- Stripe account, products/prices, Checkout and Billing configuration, webhook endpoint, and verified webhook signing secret.
+- Email/SMS provider and verified sender for confirmations and reminders.
+- Business name, phone, email, service area, hours, service catalog, tax settings, cancellation policy, and terms/privacy notices.
 
-- Allow customers to upload property photographs.
-- Support before-and-after job documentation.
-- Allow authorized customers to download requested photographs.
-- Use private storage and expiring download links.
-- Apply file-type and file-size restrictions.
+**Never commit secrets or customer personal information.** Keep Stripe secret keys, webhook secrets, OAuth client secrets, and service-role keys on the server only. Restrict photo types and sizes, use private storage, verify webhook signatures, make payment/booking operations idempotent, and keep an audit trail.
 
-8. Calendar and Scheduling
+## Roadmap
 
-- Prevent conflicting appointments.
-- Configure business hours.
-- Set appointment durations.
-- Include travel and service-area considerations.
-- Support rescheduling and cancellations.
-- Provide an administrative calendar.
-- Optionally synchronize appointments with Google Calendar.
+1. Website and responsive customer-facing forms.
+2. Secure backend, database, admin login, and private photo uploads.
+3. Availability engine and owner scheduling dashboard.
+4. Google Calendar synchronization and notifications.
+5. Stripe payments, recurring plans, invoices, and receipts.
+6. Operational testing, accessibility, SEO, and production launch.
 
-Technical Architecture
+## Success criteria
 
-- Frontend: HTML, CSS, JavaScript.
-- Hosting: GitHub Pages.
-- Backend: Supabase or equivalent.
-- Database: PostgreSQL.
-- Authentication: Supabase Auth.
-- File storage: Supabase Storage.
-- Payments: Stripe Checkout and Billing.
-- Invoicing: Stripe Invoicing and PDF generation.
-- Calendar: Internal scheduling system with optional Google Calendar synchronization.
-
-Security Requirements
-
-- Never expose API secret keys.
-- Authenticate administrative access.
-- Apply database row-level security.
-- Protect customer photographs.
-- Validate all uploads.
-- Verify Stripe webhook signatures.
-- Prevent duplicate bookings and payments.
-- Maintain booking and payment audit records.
-
-Deployment
-
-Initial deployment target:
-
-https://leonardoadame837-png.github.io/powerwash-booking/
-
-Use GitHub Actions to validate and deploy the frontend to GitHub Pages.
-
-Backend services must be deployed separately.
-
-Development Roadmap
-
-Phase 1: Professional website and responsive customer interface.
-
-Phase 2: Estimate requests, photo uploads, and booking calendar.
-
-Phase 3: Administrative dashboard and customer management.
-
-Phase 4: Stripe payments, invoices, and recurring subscriptions.
-
-Phase 5: Calendar synchronization, automated notifications, analytics, and SEO improvements.
-
-Success Criteria
-
-A customer must be able to request an estimate, upload photographs, schedule a service, receive confirmation, and pay online.
-
-The business owner must be able to manage customers, appointments, job locations, estimates, invoices, and payments from one dashboard.
+A customer can request a quote, provide property details/photos, select an available appointment, receive a confirmed booking, and pay securely. The owner can manage the full customer/job lifecycle, calendar, estimates, invoices, and payment records from an authenticated dashboard.
