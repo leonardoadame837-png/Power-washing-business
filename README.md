@@ -9,7 +9,7 @@ This repository contains the public website prototype and GitHub Pages deploymen
 ## Core capabilities planned
 
 - Professional service website, service-area and project-gallery sections.
-- Customer estimate and booking request forms.
+- Customer estimate request form with local photo previews.\n- Customer-facing calendar showing only backend-confirmed available dates and time slots.\n- Automatic booking confirmation after the backend atomically reserves a selected slot; conflicting requests receive a retry response.
 - Property photo selection and local preview before upload.
 - Owner dashboard for customers, estimates, jobs, and schedule.
 - Availability rules, working hours, travel buffers, rescheduling, and cancellation.
@@ -55,7 +55,7 @@ The workflow at `.github/workflows/deploy.yml` deploys the repository root when 
 
 GitHub Pages is available for public repositories on GitHub Free. See the [GitHub Pages workflow guide](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
-## Required production configuration
+## Live calendar and booking API contract\n\nConfigure a public API base URL as `window.POWERWASH_CONFIG.apiBaseUrl` in a `config.js` file loaded before `script.js`. Keep secrets out of browser configuration. The frontend expects:\n\n- `GET /api/availability?month=YYYY-MM` returning `{ "days": [{ "date": "YYYY-MM-DD", "slots": [{ "id": "opaque-slot-id", "label": "9:00 AM", "available": true }] }] }`.\n- `POST /api/bookings` with `{ slot_id, service, name, email, phone, address, notes }`, returning a booking confirmation. Return HTTP `409` if the slot was taken by another customer.\n- The server must re-check availability and reserve the slot atomically. The browser calendar is never authoritative.\n- The backend controls business hours, service durations, travel buffers, blackout dates, capacity, time zone, and Google Calendar synchronization.\n\n## Required production configuration
 
 Before real customers can book or pay, configure:
 
@@ -72,7 +72,7 @@ Before real customers can book or pay, configure:
 
 1. Website and responsive customer-facing forms.
 2. Secure backend, database, admin login, and private photo uploads.
-3. Availability engine and owner scheduling dashboard.
+3. Availability engine, automatic booking confirmation, and owner scheduling dashboard.
 4. Google Calendar synchronization and notifications.
 5. Stripe payments, recurring plans, invoices, and receipts.
 6. Operational testing, accessibility, SEO, and production launch.
